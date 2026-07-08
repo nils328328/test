@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>实时预览 — 融合版侧栏 v2</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; }
+.header { background: linear-gradient(135deg, #001529, #003a8c); color: #fff; padding: 14px 24px; }
+.header h1 { font-size: 16px; font-weight: 500; }
+.header p { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 4px; }
+.tabs { background: #fff; padding: 12px 16px; display: flex; gap: 8px; overflow-x: auto; border-bottom: 1px solid #e8e8e8; }
+.tabs a { padding: 6px 14px; border-radius: 16px; font-size: 12px; text-decoration: none; color: #555; background: #f0f2f5; cursor: pointer; white-space: nowrap; }
+.tabs a:hover, .tabs a.active { background: #1890ff; color: #fff; }
+.toolbar { background: #fff; padding: 8px 16px; border-bottom: 1px solid #e8e8e8; font-size: 12px; color: #666; display: flex; justify-content: space-between; align-items: center; }
+.toolbar a { color: #1890ff; cursor: pointer; margin-left: 8px; }
+.frame { width: 100%; height: calc(100vh - 132px); border: none; background: #fff; }
+.status { background: #f6ffed; border-left: 3px solid #52c41a; padding: 8px 16px; font-size: 12px; color: #001529; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔄 融合版侧栏 v2 · 实时预览</h1>
+  <p>✅ 已强制 no-cache，每次刷新都拉取最新版 · 来源 d:\first\顶点W5-原型\*.html（已替换的 12 张 PC 端）</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <a data-file="01-投顾工作台.html" class="active">01 首页工作台</a>
+  <a data-file="02-投研资配.html">02 投研资配</a>
+  <a data-file="03-顾客服务.html">03 顾客服务</a>
+  <a data-file="04-销售与交易.html">04 销售交易</a>
+  <a data-file="05-运营管理.html">05 运营管理</a>
+  <a data-file="投研-资产配置.html">资产配置</a>
+  <a data-file="投研-策略管理.html">策略管理</a>
+  <a data-file="投研-策略回测.html">策略回测</a>
+  <a data-file="投研-产品研究.html">产品研究</a>
+  <a data-file="投研-研报详情.html">研报详情</a>
+  <a data-file="投研-资讯舆情.html">资讯舆情</a>
+  <a data-file="投研-数据检索.html">数据检索</a>
+</div>
+
+<div class="toolbar">
+  <span id="cur">📄 当前页：<b>01-投顾工作台.html</b></span>
+  <span>
+    <a onclick="reloadFrame()">🔄 强制刷新</a>
+    <a onclick="openDirect()">↗️ 直接打开</a>
+  </span>
+</div>
+
+<div class="status">
+  💡 看到深色侧栏 + "端/投/顾/销/管" 5 大分组 ⇒ 还是老版 / 文件未刷新
+  <br>
+  💡 看到白底 + 彩色图标 + "主导航 / 运营管理" ⇒ 融合版成功
+</div>
+
+<iframe id="frame" class="frame" src=""></iframe>
+
+<script>
+const tabs = document.querySelectorAll('#tabs a');
+const frame = document.getElementById('frame');
+const cur = document.getElementById('cur');
+let cacheBuster = Date.now();
+
+function load(file) {
+  // 强制每个 URL 加缓存击穿参数
+  const url = './' + file + '?v=' + cacheBuster;
+  frame.src = url;
+  cur.innerHTML = '📄 当前页：<b>' + file + '</b>';
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.file === file));
+}
+
+tabs.forEach(t => {
+  t.addEventListener('click', e => {
+    e.preventDefault();
+    cacheBuster = Date.now();
+    load(t.dataset.file);
+  });
+});
+
+function reloadFrame() {
+  cacheBuster = Date.now();
+  const curFile = frame.src.split('/').pop().split('?')[0];
+  frame.src = './' + curFile + '?v=' + cacheBuster;
+}
+
+function openDirect() {
+  const curFile = frame.src.split('/').pop().split('?')[0];
+  window.open('./' + curFile, '_blank');
+}
+
+// init
+load('01-投顾工作台.html');
+</script>
+
+</body>
+</html>
